@@ -1,10 +1,16 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { TypedConfigService } from '../common/services';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import Cryptr from 'cryptr';
 import bcrypt from 'bcrypt';
 import { ApiCredentialOutput, SignInInput } from '../../typing';
+import { JWTPayloadData, JWTPayloadType } from './dto/jwt-payload';
 
 @Injectable()
 export class AuthService {
@@ -26,11 +32,15 @@ export class AuthService {
     );
   }
 
-  encrypt(payload: string): string {
-    return this.cryptr.encrypt(payload);
+  encrypt(payload: JWTPayloadData): string {
+    return this.cryptr.encrypt(JSON.stringify(payload));
   }
-  decrypt(payload: string): string {
-    return this.cryptr.decrypt(payload);
+  decrypt(payload: string): JWTPayloadData {
+    try {
+      return JSON.parse(this.cryptr.decrypt(payload)) as JWTPayloadData;
+    } catch {
+      throw new UnauthorizedException('Invalid credential.');
+    }
   }
 
   hashPassword(password: string): Promise<string> {
@@ -56,7 +66,9 @@ export class AuthService {
         lastLoginAt: new Date(),
       });
       return {
-        access_token: this.generateJWT(this.encrypt(user.id)),
+        access_token: this.generateJWT(
+          this.encrypt({ id: user.id, type: JWTPayloadType.USER }),
+        ),
       };
     } catch (err) {
       if (err instanceof BadRequestException) {
@@ -83,13 +95,15 @@ export class AuthService {
       });
 
       return {
-        access_token: this.generateJWT(this.encrypt(newUser.id)),
+        access_token: this.generateJWT(
+          this.encrypt({ id: newUser.id, type: JWTPayloadType.USER }),
+        ),
       };
     } catch (err) {
       if (err instanceof BadRequestException) {
         throw err;
       }
-      throw new BadRequestException('Unable to sign in');
+      throw new BadRequestException('Unable to sign up');
     }
   }
 }

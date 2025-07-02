@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from '../../user/user.service';
 import { AuthService } from '../auth.service';
+import { JWTPayload } from '../dto/jwt-payload';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,12 +20,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: string | object) {
-    const id = this.authService.decrypt(
-      (payload?.['data'] || payload) as string,
-    );
-    const user = await this.userService.findOne({ id });
-    if (!user) throw new UnauthorizedException('Invalid credential.');
-    return user;
+  async validate(payload: JWTPayload) {
+    try {
+      const id = this.authService.decrypt(payload.data)?.id;
+      const user = id && (await this.userService.findOne({ id }));
+      if (!user) throw new UnauthorizedException('Invalid credential.');
+      return user;
+    } catch {
+      throw new UnauthorizedException('Invalid credential.');
+    }
   }
 }
