@@ -3,6 +3,7 @@ export interface ENV_CONFIG {
 }
 
 export const PROVIDERS = {
-  DRIZZLE_ORM: Symbol('DRIZZLE_ORM'),
-  DB_CONNECTION: Symbol('DB_CONNECTION'),
+  // DRIZZLE_ORM: Symbol('DRIZZLE_ORM'),
+  // DB_CONNECTION: Symbol('DB_CONNECTION'),
+  BETTER_AUTH_INSTANCE: Symbol('BETTER_AUTH_INSTANCE'),
 } as const;

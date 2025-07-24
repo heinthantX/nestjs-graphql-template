@@ -5,6 +5,7 @@ import { CommonModule } from './common/common.module';
 import { UserModule } from './user/user.module';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { AllExceptionFilter } from './common/filters/all-exception.filter';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AllExceptionFilter } from './common/filters/all-exception.filter';
     }),
     CommonModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [

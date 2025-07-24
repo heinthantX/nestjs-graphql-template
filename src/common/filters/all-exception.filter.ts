@@ -8,9 +8,16 @@ export class AllExceptionFilter {
   private readonly logger = new Logger(AllExceptionFilter.name);
 
   catch(exception: Error, host: ArgumentsHost) {
-    const status = (exception?.['status'] as number) || 500;
+    const status =
+      (exception?.['statusCode'] as number) ||
+      (exception?.['status'] as number) ||
+      500;
     const response = exception?.['response'] as Response;
-    const tempMessage = response?.['message'] as string | string[] | undefined;
+    const tempMessage = (response?.['message'] ||
+      (exception?.['body'] as object)?.['message']) as
+      | string
+      | string[]
+      | undefined;
     const message = Array.isArray(tempMessage)
       ? tempMessage
       : typeof tempMessage === 'string'

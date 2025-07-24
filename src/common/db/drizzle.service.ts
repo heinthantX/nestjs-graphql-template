@@ -4,17 +4,26 @@ import { Pool } from 'pg';
 import schema from './schema';
 import { TypedConfigService } from '../services';
 
-function getClient() {
-  return class abstract {
+let client: NodePgDatabase<typeof schema>;
+export function getClient() {
+  if (client) {
+    return client;
+  }
+  const configService = new TypedConfigService();
+  const pool = new Pool({
+    connectionString: configService.get('DATABASE_URL'),
+  });
+  client = drizzle(pool, { schema });
+  return client;
+}
+
+function getClientClass() {
+  return class {
     constructor() {
-      const configService = new TypedConfigService();
-      const pool = new Pool({
-        connectionString: configService.get('DATABASE_URL'),
-      });
-      return drizzle(pool, { schema });
+      return getClient();
     }
   } as new () => NodePgDatabase<typeof schema>;
 }
 
 @Injectable()
-export class DrizzleService extends getClient() {}
+export class DrizzleService extends getClientClass() {}
