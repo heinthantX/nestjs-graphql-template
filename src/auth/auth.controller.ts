@@ -1,9 +1,9 @@
-import { Body, Controller, Post, UseGuards, Headers } from '@nestjs/common';
+import { Body, Controller, Post, Headers, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { EmailSignInDto } from './dto';
 import { SocialSignInDto } from './dto/social-sign-in.dto';
-import { AuthGuard, Session, UserSession } from '@thallesp/nestjs-better-auth';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { Session, UserSession } from '@thallesp/nestjs-better-auth';
+import Protected from './decorators/protected.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -27,9 +27,8 @@ export class AuthController {
     return this.authService.anonymousSignIn(headers);
   }
 
-  @Post('get-session')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth()
+  @Get('get-session')
+  @Protected()
   getSession(@Session() session: UserSession) {
     return session;
   }
