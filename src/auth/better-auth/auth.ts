@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { getClient } from '../../common/db/drizzle.service';
-import { openAPI, bearer, anonymous } from 'better-auth/plugins';
+import { bearer, anonymous } from 'better-auth/plugins';
 import schema from '../../common/db/schema';
 import 'dotenv/config';
 import { UserRole } from '../dto/enum/user-role';
@@ -34,8 +34,7 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
       accessType: 'offline',
       prompt: 'select_account+consent',
-      responseMode: 'query',
     },
   },
-  plugins: [openAPI(), bearer(), anonymous({})],
+  plugins: [bearer(), anonymous({})],
 });
