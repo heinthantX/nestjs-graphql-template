@@ -12,7 +12,7 @@
     "start:dev": "nest start --watch",
     "dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "NODE_ENV=production node dist/main",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "auth:generate": "npx @better-auth/cli generate --config ./src/auth/better-auth/auth.ts --output ./src/auth/schema.ts && yarn db:generate",
