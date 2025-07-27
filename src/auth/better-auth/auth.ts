@@ -1,7 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { getClient } from '../../common/db/drizzle.service';
-import { bearer, anonymous } from 'better-auth/plugins';
+import { bearer, anonymous, openAPI } from 'better-auth/plugins';
 import schema from '../../common/db/schema';
 import 'dotenv/config';
 import { UserRole } from '../dto/enum/user-role';
@@ -36,5 +36,5 @@ export const auth = betterAuth({
       prompt: 'select_account+consent',
     },
   },
-  plugins: [bearer(), anonymous({})],
+  plugins: [bearer(), anonymous({}), openAPI()],
 });

@@ -4,6 +4,7 @@ import { EmailSignInDto } from './dto';
 import { AuthService as BetterAuthService } from '@thallesp/nestjs-better-auth';
 import { auth } from './better-auth/auth';
 import { SocialSignInDto } from './dto/social-sign-in.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +12,10 @@ export class AuthService {
     private readonly db: DrizzleService,
     private readonly betterAuthService: BetterAuthService<typeof auth>,
   ) {}
+
+  clearSessionCookies(res: Response) {
+    res.clearCookie('better-auth.session_token');
+  }
 
   async signIn(dto: EmailSignInDto, headers: Headers) {
     const { email, password } = dto;

@@ -1,11 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ipWhiteListMiddleWare } from './common/middlewares/ip-whitelist.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: false,
   });
+
+  app.use(ipWhiteListMiddleWare);
 
   const config = new DocumentBuilder()
     .setTitle('MMFonts')
